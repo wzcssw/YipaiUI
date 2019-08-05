@@ -36,8 +36,11 @@
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
           </a>
+          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+            <el-dropdown-item>修改密码</el-dropdown-item>
+          </a>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Log Out</span>
+            <span style="display:block;" @click="logout">注销</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

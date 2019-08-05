@@ -13,6 +13,9 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+// 时间插件 Moment
+import Moment from 'moment'
+
 import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
@@ -38,6 +41,17 @@ Object.keys(filters).forEach(key => {
 })
 
 Vue.config.productionTip = false
+
+Vue.prototype.moment = Moment
+Vue.filter('dateFormatD', function(value) {
+  return Moment(value).format('YYYY-MM-DD')
+})
+Vue.filter('dateFormatM', function(value) {
+  return Moment(value).format('YYYY-MM-DD HH:mm')
+})
+Vue.filter('dateFormat', function(value) {
+  return Moment(value).format('YYYY-MM-DD HH:mm:ss')
+})
 
 new Vue({
   el: '#app',

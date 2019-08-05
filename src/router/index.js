@@ -65,7 +65,7 @@ export const constantRoutes = [
         path: 'home',
         component: () => import('@/views/home/index'),
         name: 'Home',
-        meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+        meta: { title: '首页', icon: 'dashboard', noCache: true }
       }
     ]
   }
@@ -82,6 +82,11 @@ export const asyncRoutes = [
   {
     path: '/system',
     component: Layout,
+    redirect: 'system/users',
+    meta: {
+      title: '系统管理',
+      icon: 'user'
+    },
     children: [
       {
         path: 'users',
