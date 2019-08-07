@@ -5,116 +5,123 @@
       <div class="title-container">
         <h3 class="title">一拍·集合 | 注册账号</h3>
       </div>
+      <el-row style="margin-top: 65px">
+        <el-col :span="10">
+          <el-form-item prop="username">
+            <span class="svg-container">
+              <svg-icon icon-class="user" />
+            </span>
+            <el-input ref="username" v-model="signinForm.username" placeholder="用户名" name="username" type="text" tabindex="1" autocomplete="on" />
+          </el-form-item>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input ref="username" v-model="signinForm.username" placeholder="用户名" name="username" type="text" tabindex="1" autocomplete="on" />
-      </el-form-item>
+          <el-form-item prop="realname">
+            <span class="svg-container">
+              <svg-icon icon-class="edit" />
+            </span>
+            <el-input ref="realname" v-model="signinForm.realname" placeholder="真实姓名" name="realname" type="text" tabindex="1" autocomplete="on" />
+          </el-form-item>
 
-      <el-form-item prop="realname">
-        <span class="svg-container">
-          <svg-icon icon-class="edit" />
-        </span>
-        <el-input ref="realname" v-model="signinForm.realname" placeholder="真实姓名" name="realname" type="text" tabindex="1" autocomplete="on" />
-      </el-form-item>
+          <el-tooltip v-model="capsTooltip" content="大写锁定已开启" placement="right" manual>
+            <el-form-item prop="password">
+              <span class="svg-container">
+                <svg-icon icon-class="password" />
+              </span>
+              <el-input
+                ref="password"
+                :key="passwordType"
+                v-model="signinForm.password"
+                :type="passwordType"
+                placeholder="密码"
+                name="password"
+                tabindex="2"
+                autocomplete="on"
+                @keyup.native="checkCapslock"
+                @blur="capsTooltip = false"
+                @keyup.enter.native="handleSignin"
+              />
+              <span class="show-pwd" @click="showPwd">
+                <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+              </span>
+            </el-form-item>
+          </el-tooltip>
 
-      <el-tooltip v-model="capsTooltip" content="大写锁定已开启" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            ref="password"
-            :key="passwordType"
-            v-model="signinForm.password"
-            :type="passwordType"
-            placeholder="密码"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleSignin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
+          <el-tooltip v-model="capsTooltip" content="大写锁定已开启" placement="right" manual>
+            <el-form-item prop="passwordRepeat">
+              <span class="svg-container">
+                <svg-icon icon-class="password" />
+              </span>
+              <el-input
+                ref="passwordRepeat"
+                :key="passwordType"
+                v-model="signinForm.passwordRepeat"
+                :type="passwordType"
+                placeholder="重复密码"
+                name="passwordRepeat"
+                tabindex="2"
+                autocomplete="on"
+                @keyup.native="checkCapslock"
+                @blur="capsTooltip = false"
+                @keyup.enter.native="handleSignin"
+              />
+              <span class="show-pwd" @click="showPwd">
+                <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+              </span>
+            </el-form-item>
+          </el-tooltip>
+        </el-col>
+        <el-col :span="4">
+          <div style="height: 251px;margin: 9px 10px 0 78px;width:5px;border-left: solid 1px #ffffff59;" />
+        </el-col>
+        <el-col :span="10">
+          <el-form-item prop="email">
+            <span class="svg-container">
+              <svg-icon icon-class="email" />
+            </span>
+            <el-input
+              ref="email"
+              v-model="signinForm.email"
+              placeholder="邮箱"
+              name="email"
+              type="text"
+              tabindex="1"
+              autocomplete="on"
+            />
+          </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="大写锁定已开启" placement="right" manual>
-        <el-form-item prop="passwordRepeat">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            ref="passwordRepeat"
-            :key="passwordType"
-            v-model="signinForm.passwordRepeat"
-            :type="passwordType"
-            placeholder="重复密码"
-            name="passwordRepeat"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleSignin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
+          <el-form-item prop="phone">
+            <span class="svg-container">
+              <svg-icon icon-class="phone" />
+            </span>
+            <el-input
+              ref="phone"
+              v-model="signinForm.phone"
+              placeholder="手机号码"
+              name="phone"
+              type="text"
+              tabindex="1"
+              autocomplete="on"
+            />
+          </el-form-item>
 
-      <el-form-item prop="email">
-        <span class="svg-container">
-          <svg-icon icon-class="email" />
-        </span>
-        <el-input
-          ref="email"
-          v-model="signinForm.email"
-          placeholder="邮箱"
-          name="email"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
+          <el-form-item prop="validSms" style="height: 52px">
+            <span class="svg-container">
+              <svg-icon icon-class="validsms" />
+            </span>
+            <el-input
+              ref="validSms"
+              v-model="signinForm.validSms"
+              placeholder="短信验证码"
+              name="validSms"
+              type="text"
+              tabindex="1"
+              autocomplete="on"
+            />
+            <a class="get-sms" @click="getValidSms">{{ smsBtnContent }}</a>
+          </el-form-item>
 
-      <el-form-item prop="phone">
-        <span class="svg-container">
-          <svg-icon icon-class="phone" />
-        </span>
-        <el-input
-          ref="phone"
-          v-model="signinForm.phone"
-          placeholder="手机号码"
-          name="phone"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-      </el-form-item>
-
-      <el-form-item prop="validSms" style="height: 52px">
-        <span class="svg-container">
-          <svg-icon icon-class="validsms" />
-        </span>
-        <el-input
-          ref="validSms"
-          v-model="signinForm.validSms"
-          placeholder="短信验证码"
-          name="validSms"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
-        <a class="get-sms" @click="getValidSms">{{ smsBtnContent }}</a>
-      </el-form-item>
-
-      <el-button :loading="loading" type="success" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleSignin">注册</el-button>
+          <el-button :loading="loading" type="success" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleSignin">注册</el-button>
+        </el-col>
+      </el-row>
     </el-form>
 
     <div class="footer">
@@ -374,7 +381,7 @@ $light_gray:#eee;
 
   .login-form {
     position: relative;
-    width: 520px;
+    width: 1000px;
     max-width: 100%;
     padding: 160px 35px 0;
     margin: 0 auto;
@@ -448,12 +455,12 @@ $light_gray:#eee;
     position: relative;
     color: #FFF;
     top: -47px;
-    left: 330px;
+    left: 275px;
     width: 112px;
   }
 
   .get-sms:hover{
-    text-decoration:underline
+    text-decoration: underline
   }
 
   .footer{
