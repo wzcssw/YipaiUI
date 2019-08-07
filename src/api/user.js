@@ -8,6 +8,14 @@ export function login(data) {
   })
 }
 
+export function signin(data) {
+  return request({
+    url: '/sessions/signin',
+    method: 'post',
+    data
+  })
+}
+
 export function getInfo(params) {
   return request({
     url: '/sessions/',
@@ -20,6 +28,14 @@ export function logout(params) {
   return request({
     url: '/sessions/',
     method: 'delete',
+    params
+  })
+}
+
+export function getSMS(params) {
+  return request({
+    url: '/sessions/sms',
+    method: 'get',
     params
   })
 }
