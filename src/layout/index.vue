@@ -120,6 +120,7 @@ export default {
     line-height: 27px;
     text-align: center;
     transition: width 0.28s;
+    z-index: 1;
   }
 
   .footerClose{

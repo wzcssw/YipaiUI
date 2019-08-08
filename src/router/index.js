@@ -83,7 +83,35 @@ export const constantRoutes = [
 export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   // chartsRouter,
-
+  {
+    path: '/jx_xjx',
+    component: Layout,
+    redirect: 'jd_xjx/list',
+    meta: {
+      title: '京东竞销',
+      icon: 'jd'
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/jd_xjx/list'),
+        name: '竞销列表',
+        meta: { title: '竞销列表' }
+      },
+      {
+        path: 'auction',
+        component: () => import('@/views/jd_xjx/auction'),
+        name: '我的委托',
+        meta: { title: '我的委托' }
+      },
+      {
+        path: 'jingxiao',
+        component: () => import('@/views/jd_xjx/jingxiao'),
+        name: '我的竞销',
+        meta: { title: '我的竞销' }
+      }
+    ]
+  },
   {
     path: '/system',
     component: Layout,
@@ -98,6 +126,12 @@ export const asyncRoutes = [
         component: () => import('@/views/system/users'),
         name: '用户',
         meta: { title: '用户', icon: 'user' }
+      },
+      {
+        path: 'other',
+        component: () => import('@/views/system/other'),
+        name: '其他',
+        meta: { title: '其他', icon: 'user' }
       }
     ]
   },
