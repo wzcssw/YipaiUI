@@ -8,3 +8,10 @@ export function getDetails(params) {
   })
 }
 
+export function getDicts(params) {
+  return request({
+    url: '/jd_xjx/dicts',
+    method: 'get',
+    params
+  })
+}

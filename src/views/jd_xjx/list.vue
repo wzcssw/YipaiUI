@@ -1,12 +1,17 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="'销售编号'" prefix-icon="el-icon-document" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.name" :placeholder="'库房'" prefix-icon="el-icon-document" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.phone" :placeholder="'开始时间'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.phone" :placeholder="'结束时间'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.phone" :placeholder="'商品分类'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.phone" :placeholder="'商品名称'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.order_id" :placeholder="'销售编号'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.group_id" :placeholder="'库房'" clearable class="filter-item short-input" @change="handleFilter">
+        <el-option v-for="item in listGroup" :key="item.code" :label="item.name" :value="item.code" />
+      </el-select>
+      <el-select v-model="listQuery.startTime" :placeholder="'开始时间'" clearable class="filter-item short-input" @change="handleFilter">
+        <el-option v-for="item in startTimeOptions" :key="item.k" :label="item.v" :value="item.k" />
+      </el-select>
+      <el-select v-model="listQuery.classify_id" :placeholder="'商品分类'" clearable class="filter-item short-input" @change="handleFilter">
+        <el-option v-for="item in listClassified" :key="item.code" :label="item.name" :value="item.code" />
+      </el-select>
+      <el-input v-model="listQuery.name" :placeholder="'商品名称'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
     <!-- height="440" -->
@@ -48,8 +53,15 @@
 
 <script>
 import { getDetails } from '@/api/jdXjx'
+import { getDicts } from '@/api/jdXjx'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
+
+const startTimeOptions = [
+  { k: 'today', v: '今天' },
+  { k: 'three', v: '三天内' },
+  { k: 'seven', v: '七天内' }
+]
 
 export default {
   name: 'XjxListTable',
@@ -74,20 +86,27 @@ export default {
   data() {
     return {
       list: [],
+      listClassified: [],
+      listGroup: [],
       total: 0,
       listLoading: false,
       listQuery: {
         page: 1,
         limit: 15,
-        name: '',
-        phone: ''
+        name: undefined,
+        startTime: 'today',
+        order_id: undefined,
+        group_id: undefined,
+        classify_id: undefined
       },
+      startTimeOptions: startTimeOptions,
       tableHeight: 440,
       pageSizesList: [15, 30, 45, 60, 200]
     }
   },
   created() {
     this.getList()
+    this.getOptions()
   },
   mounted() {
     setTimeout(() => { // 计算表高度
@@ -103,6 +122,24 @@ export default {
         this.list = response.data
       }).catch(error => {
         this.listLoading = false
+        this.$message({
+          message: error.data.message,
+          type: 'warning'
+        })
+      })
+    },
+    getOptions() {
+      getDicts({ type: 1 }).then(response => {
+        this.listGroup = response.data
+      }).catch(error => {
+        this.$message({
+          message: error.data.message,
+          type: 'warning'
+        })
+      })
+      getDicts({ type: 2 }).then(response => {
+        this.listClassified = response.data
+      }).catch(error => {
         this.$message({
           message: error.data.message,
           type: 'warning'
