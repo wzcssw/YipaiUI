@@ -8,6 +8,22 @@ export function getDetails(params) {
   })
 }
 
+export function getComposes(params) {
+  return request({
+    url: '/jd_xjx/composes',
+    method: 'get',
+    params
+  })
+}
+
+export function addAuction(params) {
+  return request({
+    url: '/jd_xjx/auctions',
+    method: 'post',
+    params
+  })
+}
+
 export function getDicts(params) {
   return request({
     url: '/jd_xjx/dicts',

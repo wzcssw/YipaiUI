@@ -14,11 +14,15 @@
       <el-input v-model="listQuery.name" :placeholder="'商品名称'" clearable class="filter-item short-input" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
-    <!-- height="440" -->
+
     <el-table ref="mainTable" v-loading="listLoading" :data="list" :height="tableHeight" element-loading-text="加载中" border stripe>
       <el-table-column :label="'序号'" :index="indexMethod" width="50" type="index" />
       <el-table-column prop="group.name" show-overflow-tooltip label="机构" />
-      <el-table-column prop="order_id" show-overflow-tooltip width="136" label="销售编号" />
+      <el-table-column :label="'销售编号'" width="136">
+        <template slot-scope="scope">
+          <span class="link-type" @click="handleCompose(scope.row)">{{ scope.row.order_id }}</span>
+        </template>
+      </el-table-column>
       <el-table-column :label="'销售品类'" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ showClassfies(scope.row.classifies) }}
@@ -39,12 +43,18 @@
       <el-table-column prop="description" show-overflow-tooltip label="销售说明" />
       <el-table-column :label="''" align="center" class-name="small-padding fixed-width-me">
         <template slot-scope="scope">
-          <el-button type="text" size="mini" @click="handleFilter(scope.row)">委托</el-button>
+          <el-button type="text" size="mini" @click="handleAuction(scope.row)">委托</el-button>
           <div class="division" />
-          <el-button type="text" size="mini" @click="handleFilter(scope.row)">导出</el-button>
+          <el-button type="text" size="mini" @click="handleExport(scope.row)">导出</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 组合详情 -->
+    <composeDetail ref="composeDetail" />
+
+    <!-- 委托 -->
+    <auction ref="auction" />
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" :page-sizes="pageSizesList" @pagination="getList" />
 
@@ -54,8 +64,11 @@
 <script>
 import { getDetails } from '@/api/jdXjx'
 import { getDicts } from '@/api/jdXjx'
+import { getToken } from '@/utils/auth'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
+import composeDetail from './composeDetail'
+import auction from './auction'
 
 const startTimeOptions = [
   { k: 'today', v: '今天' },
@@ -65,7 +78,7 @@ const startTimeOptions = [
 
 export default {
   name: 'XjxListTable',
-  components: { Pagination },
+  components: { Pagination, composeDetail, auction },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -152,6 +165,15 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
+    },
+    handleCompose(row) {
+      this.$refs.composeDetail.initDialog(row)
+    },
+    handleAuction(row) {
+      this.$refs.auction.initDialog(row)
+    },
+    handleExport(row) {
+      window.location.href = '/api/v1/jd_xjx/details/excel?token=' + getToken() + '&detail_id=' + row.id
     },
     showClassfies(classifies) {
       const result = []
