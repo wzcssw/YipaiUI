@@ -10,7 +10,7 @@
         <p class="sm-p">销售编号: {{ row.order_id }}</p>
         <p class="sm-p" style="margin-left: 25px">新品参考价: {{ row.reference_price }}</p>
       </div>
-      <code style="margin-top:15px;">*最大出价即预计竞拍此商品的最大出价值，我们会为你定时以此为参考抢购</code>
+      <code style="margin-top:15px;">*最大出价即预计竞拍此商品的最大出价值，我们会为您定时以此为参考抢购</code>
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button @click="auctionVisible = false">取消</el-button>

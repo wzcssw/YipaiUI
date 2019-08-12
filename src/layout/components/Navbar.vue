@@ -30,13 +30,7 @@
           <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a @click="handleUpdatePwd">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item divided>
@@ -45,6 +39,9 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <!-- 修改密码 -->
+    <updatePwd ref="updatePwd" />
   </div>
 </template>
 
@@ -56,6 +53,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import updatePwd from '../updatePwd'
 
 export default {
   components: {
@@ -64,7 +62,8 @@ export default {
     ErrorLog,
     Screenfull,
     SizeSelect,
-    Search
+    Search,
+    updatePwd
   },
   computed: {
     ...mapGetters([
@@ -80,6 +79,9 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    handleUpdatePwd() {
+      this.$refs.updatePwd.initUpdatePwdDialog()
     }
   }
 }

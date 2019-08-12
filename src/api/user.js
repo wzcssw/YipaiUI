@@ -47,3 +47,11 @@ export function getUsers(params) {
     params
   })
 }
+
+export function updatePassword(data) {
+  return request({
+    url: '/users/password',
+    method: 'put',
+    data
+  })
+}
