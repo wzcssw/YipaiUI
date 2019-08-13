@@ -1,4 +1,5 @@
 <template>
+  <!-- 委托对话框 -->
   <el-dialog :title="'委托'" :visible.sync="auctionVisible" width="430px">
     <div class="box-item">
       <span class="field-label">最高出价:</span>

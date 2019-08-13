@@ -17,36 +17,33 @@
 
     <el-table ref="mainTable" v-loading="listLoading" :data="list" :height="tableHeight" element-loading-text="加载中" border stripe>
       <el-table-column :label="'序号'" :index="indexMethod" width="50" type="index" />
-      <el-table-column prop="group.name" show-overflow-tooltip label="机构" />
       <el-table-column :label="'销售编号'" width="136">
         <template slot-scope="scope">
-          <span class="link-type" @click="handleCompose(scope.row)">{{ scope.row.order_id }}</span>
+          <span class="link-type" @click="handleCompose(scope.row.detail)">{{ scope.row.detail.order_id }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="'销售品类'" show-overflow-tooltip>
         <template slot-scope="scope">
-          {{ showClassfies(scope.row.classifies) }}
+          {{ showClassfies(scope.row.detail.classifies) }}
         </template>
       </el-table-column>
-      <el-table-column prop="reference_price" show-overflow-tooltip label="新品参考价" />
-      <el-table-column prop="start_price" show-overflow-tooltip label="起拍价" />
-      <el-table-column prop="current_amount" show-overflow-tooltip label="当前价" />
-      <el-table-column :label="'开始时间'" show-overflow-tooltip>
+      <el-table-column prop="detail.reference_price" show-overflow-tooltip label="新品参考价" />
+      <el-table-column prop="detail.start_price" show-overflow-tooltip label="起拍价" />
+      <el-table-column prop="detail.current_amount" show-overflow-tooltip label="当前价" />
+      <el-table-column :label="'当前折扣'" show-overflow-tooltip>
         <template slot-scope="scope">
-          {{ scope.row.start_time | dateFormat }}
+          {{ (( scope.row.detail.current_amount / scope.row.detail.reference_price) * 10 ).toFixed(1) }}折
         </template>
       </el-table-column>
-      <el-table-column :label="'开始时间'" show-overflow-tooltip>
+      <el-table-column prop="max_price" show-overflow-tooltip label="最大出价" />
+      <el-table-column :label="'出价空间'" show-overflow-tooltip>
         <template slot-scope="scope">
-          {{ scope.row.end_time | dateFormat }}
+          {{ ( (scope.row.max_price - scope.row.current_amount) / Math.floor(scope.row.start_price) * 100 ).toFixed(1) }}%
         </template>
       </el-table-column>
-      <el-table-column prop="description" show-overflow-tooltip label="销售说明" />
       <el-table-column :label="''" align="center" class-name="small-padding fixed-width-me">
         <template slot-scope="scope">
           <el-button type="text" size="mini" @click="handleAuction(scope.row)">委托</el-button>
-          <div class="division" />
-          <el-button type="text" size="mini" @click="handleExport(scope.row)">导出</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -63,9 +60,8 @@
 </template>
 
 <script>
-import { getDetails } from '@/api/jdXjx'
+import { getOrders } from '@/api/jdXjx'
 import { getDicts } from '@/api/jdXjx'
-import { getToken } from '@/utils/auth'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 import composeDetail from './composeDetail'
@@ -130,7 +126,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getDetails(this.listQuery).then(response => {
+      getOrders(this.listQuery).then(response => {
         this.listLoading = false
         this.total = response.total
         this.list = response.data
@@ -173,10 +169,10 @@ export default {
     handleAuction(row) {
       this.$refs.auction.initDialog(row)
     },
-    handleExport(row) {
-      window.location.href = '/api/v1/jd_xjx/details/excel?token=' + getToken() + '&detail_id=' + row.id
-    },
     showClassfies(classifies) {
+      if (!classifies) {
+        return ''
+      }
       const result = []
       classifies.forEach(value => result.push(value.name))
       return result.join('、')

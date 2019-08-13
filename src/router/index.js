@@ -99,8 +99,8 @@ export const asyncRoutes = [
         meta: { title: '竞销列表' }
       },
       {
-        path: 'auction',
-        component: () => import('@/views/jd_xjx/auction'),
+        path: 'my-auction',
+        component: () => import('@/views/jd_xjx/my_auction'),
         name: '我的委托',
         meta: { title: '我的委托' }
       },

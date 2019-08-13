@@ -31,3 +31,11 @@ export function getDicts(params) {
     params
   })
 }
+
+export function getOrders(params) {
+  return request({
+    url: '/jd_xjx/orders',
+    method: 'get',
+    params
+  })
+}
