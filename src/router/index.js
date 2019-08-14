@@ -115,36 +115,29 @@ export const asyncRoutes = [
   {
     path: '/system',
     component: Layout,
-    redirect: 'system/users',
+    redirect: 'system/user',
     meta: {
       title: '系统管理',
       icon: 'user'
     },
     children: [
       {
-        path: 'users',
-        component: () => import('@/views/system/users'),
+        path: 'user',
+        component: () => import('@/views/system/user'),
         name: '用户',
-        meta: { title: '用户', icon: 'user' }
+        meta: { title: '用户' }
       },
       {
-        path: 'other',
-        component: () => import('@/views/system/other'),
-        name: '其他',
-        meta: { title: '其他', icon: 'user' }
-      }
-    ]
-  },
-
-  {
-    path: '/clipboard',
-    component: Layout,
-    children: [
+        path: 'role',
+        component: () => import('@/views/system/role'),
+        name: '角色',
+        meta: { title: '角色' }
+      },
       {
-        path: 'index',
-        component: () => import('@/views/clipboard/index'),
-        name: 'ClipboardDemo',
-        meta: { title: 'Clipboard', icon: 'clipboard' }
+        path: 'permission',
+        component: () => import('@/views/system/permission'),
+        name: '权限',
+        meta: { title: '权限' }
       }
     ]
   },
