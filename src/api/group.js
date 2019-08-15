@@ -1,24 +1,24 @@
 import request from '@/utils/request'
 
-export function getPermissions(params) {
+export function getGroups(params) {
   return request({
-    url: '/permissions',
+    url: '/groups',
     method: 'get',
     params
   })
 }
 
-export function addPermission(data) {
+export function addGroup(data) {
   return request({
-    url: '/permissions',
+    url: '/groups',
     method: 'post',
     data
   })
 }
 
-export function updatePermission(data) {
+export function updateGroup(data) {
   return request({
-    url: '/permissions',
+    url: '/groups',
     method: 'put',
     data
   })
