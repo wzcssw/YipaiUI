@@ -24,6 +24,8 @@
       <el-table-column :label="''" align="center" class-name="small-padding fixed-width-me">
         <template slot-scope="scope">
           <el-button type="text" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+          <div class="division" />
+          <el-button type="text" size="mini" @click="handlePermission(scope.row)">权限</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,6 +52,9 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" :page-sizes="pageSizesList" @pagination="getList" />
 
+    <!-- 权限控制 -->
+    <permissionDialog ref="permissionDialog" />
+
   </div>
 </template>
 
@@ -57,12 +62,13 @@
 import { getRoles } from '@/api/role'
 import { addRole } from '@/api/role'
 import { updateRole } from '@/api/role'
+import permissionDialog from './permissionDialog'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
 
 export default {
   name: 'RolesTable',
-  components: { Pagination },
+  components: { Pagination, permissionDialog },
   directives: { waves },
   data() {
     return {
@@ -134,6 +140,9 @@ export default {
         this.editRoleTitle = '新增'
       }
       this.editRoleVisiable = true
+    },
+    handlePermission() {
+      this.$refs.permissionDialog.initDialog()
     },
     createData() {
       this.editRoleLoading = true

@@ -16,11 +16,11 @@ export function getComposes(params) {
   })
 }
 
-export function addAuction(params) {
+export function addAuction(data) {
   return request({
     url: '/jd_xjx/auctions',
     method: 'post',
-    params
+    data
   })
 }
 

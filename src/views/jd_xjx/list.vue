@@ -44,7 +44,8 @@
       <el-table-column prop="description" show-overflow-tooltip label="销售说明" />
       <el-table-column :label="''" align="center" class-name="small-padding fixed-width-me">
         <template slot-scope="scope">
-          <el-button type="text" size="mini" @click="handleAuction(scope.row)">委托</el-button>
+          <el-button v-if="!isAuctioned(scope.row)" type="text" size="mini" @click="handleAuction(scope.row)">委托</el-button>
+          <el-button v-if="isAuctioned(scope.row)" type="text" size="mini" disabled @click="handleAuction(scope.row)">已委托</el-button>
           <div class="division" />
           <el-button type="text" size="mini" @click="handleExport(scope.row)">导出</el-button>
         </template>
@@ -180,6 +181,14 @@ export default {
       const result = []
       classifies.forEach(value => result.push(value.name))
       return result.join('、')
+    },
+    isAuctioned(row) {
+      if (row.order) {
+        if (!row.order.cancel) {
+          return true
+        }
+      }
+      return false
     }
   }
 }

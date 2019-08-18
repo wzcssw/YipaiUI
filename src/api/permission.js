@@ -23,3 +23,11 @@ export function updatePermission(data) {
     data
   })
 }
+
+export function getPermissionTree(params) {
+  return request({
+    url: '/permissions/tree',
+    method: 'get',
+    params
+  })
+}

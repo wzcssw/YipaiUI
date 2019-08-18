@@ -41,9 +41,14 @@
           {{ ( (scope.row.max_price - scope.row.current_amount) / Math.floor(scope.row.start_price) * 100 ).toFixed(1) }}%
         </template>
       </el-table-column>
+      <el-table-column :label="'委托状态'" show-overflow-tooltip>
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.cancel | cancelFilter" size="mini">{{ scope.row.cancel | cancelFilterZH }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column :label="''" align="center" class-name="small-padding fixed-width-me">
         <template slot-scope="scope">
-          <el-button type="text" size="mini" @click="handleAuction(scope.row)">委托</el-button>
+          <el-button type="text" size="mini" @click="handleAuction(scope.row.detail)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,17 +83,17 @@ export default {
   components: { Pagination, composeDetail, auction },
   directives: { waves },
   filters: {
-    statusFilter(status) {
+    cancelFilter(status) {
       const statusMap = {
-        0: 'success',
-        1: 'danger'
+        true: 'info',
+        false: 'success'
       }
       return statusMap[status]
     },
-    statusFilterZH(status) {
+    cancelFilterZH(status) {
       const statusMap = {
-        0: '启用',
-        1: '禁用'
+        true: '已取消',
+        false: '委托中'
       }
       return statusMap[status]
     }

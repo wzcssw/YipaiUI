@@ -1,21 +1,21 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="'角色名'" style="width: 180px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" :placeholder="'权限名'" style="width: 180px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.remark" :placeholder="'备注'" style="width: 180px;" clearable class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.group_id" :placeholder="'权限组'" clearable class="filter-item short-input" @change="handleFilter">
-        <el-option v-for="item in listGroup" :key="item.id" :label="item.remark" :value="item.id" />
-      </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-circle-plus" @click="handleEdit()">新增</el-button>
-      <el-button v-waves class="filter-item" type="default" icon="el-icon-share" @click="handleGroup">权限组</el-button>
     </div>
 
     <el-table ref="mainTable" v-loading="listLoading" :data="list" :height="tableHeight" element-loading-text="加载中" border stripe>
       <el-table-column :label="'序号'" :index="indexMethod" width="50" type="index" />
-      <el-table-column prop="group.remark" show-overflow-tooltip label="权限组" />
-      <el-table-column prop="name" show-overflow-tooltip label="角色名" />
+      <el-table-column prop="name" show-overflow-tooltip label="权限名" />
       <el-table-column prop="remark" show-overflow-tooltip label="备注" />
+      <el-table-column :label="'父权限'" show-overflow-tooltip>
+        <template slot-scope="scope">
+          {{ showNullRemark(scope.row.parent) }}
+        </template>
+      </el-table-column>
       <el-table-column :label="'创建时间'" show-overflow-tooltip>
         <template slot-scope="scope">
           {{ scope.row.created_at | dateFormat }}
@@ -39,10 +39,8 @@
           <el-form-item v-show="false" :label="'id'" prop="id">
             <el-input v-model="editPermission.id" />
           </el-form-item>
-          <el-form-item :label="'权限组'" prop="remark">
-            <el-select v-model="editPermission.group_id" :placeholder="'权限组'" style="width: 220px;" clearable>
-              <el-option v-for="item in listGroup" :key="item.id" :label="item.remark" :value="item.id" />
-            </el-select>
+          <el-form-item :label="'父权限'" prop="remark">
+            <el-cascader v-model="editPermission.parent_id" :props="{ checkStrictly: true }" :show-all-levels="false" :options="permissionTree" style="width: 220px;" clearable />
           </el-form-item>
           <el-form-item :label="'名称'" prop="name">
             <el-input v-model="editPermission.name" :placeholder="'名称'" style="width: 220px;" class="filter-item" clearable />
@@ -60,9 +58,6 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" :page-sizes="pageSizesList" @pagination="getList" />
 
-    <!-- 权限组 -->
-    <group ref="group" />
-
   </div>
 </template>
 
@@ -70,14 +65,13 @@
 import { getPermissions } from '@/api/permission'
 import { addPermission } from '@/api/permission'
 import { updatePermission } from '@/api/permission'
-import { getGroups } from '@/api/group'
+import { getPermissionTree } from '@/api/permission'
 import waves from '@/directive/waves'
 import Pagination from '@/components/Pagination'
-import group from './group'
 
 export default {
   name: 'PermissionTable',
-  components: { Pagination, group },
+  components: { Pagination },
   directives: { waves },
   data() {
     return {
@@ -87,32 +81,29 @@ export default {
       listQuery: {
         page: 1,
         limit: 15,
-        group_id: undefined,
         name: '',
         remark: ''
       },
+      permissionTree: [],
       tableHeight: 440,
       pageSizesList: [15, 30, 45, 60, 200],
       editPermission: {
         id: undefined,
-        group_id: undefined,
+        parent_id: 0,
         name: undefined,
         remark: undefined
       },
       editPermissionVisiable: false,
       editPermissionLoading: false,
       editPermissionRules: {
-        group_id: [{ required: true, message: '请选择权限组', trigger: 'blur' }],
         name: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         remark: [{ required: true, message: '请输入备注', trigger: 'blur' }]
       },
-      editPermissionTitle: '',
-      listGroup: []
+      editPermissionTitle: ''
     }
   },
   created() {
     this.getList()
-    this.getGroupList()
   },
   mounted() {
     setTimeout(() => { // 计算表高度
@@ -134,16 +125,6 @@ export default {
         })
       })
     },
-    getGroupList() {
-      getGroups({ limit: -1 }).then(response => {
-        this.listGroup = response.data
-      }).catch(error => {
-        this.$message({
-          message: error.data.message,
-          type: 'warning'
-        })
-      })
-    },
     indexMethod(index) {
       return (index + 1)
     },
@@ -151,11 +132,15 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleGroup() {
-      this.$refs.group.initDialog()
-    },
     handleEdit(row) {
-      this.getGroupList()
+      getPermissionTree({}).then(response => {
+        this.permissionTree = response.data
+      }).catch(error => {
+        this.$message({
+          message: error.data.message,
+          type: 'warning'
+        })
+      })
       if (row) {
         this.editPermission = row
         this.editPermissionTitle = '编辑'
@@ -169,8 +154,17 @@ export default {
       }
       this.editPermissionVisiable = true
     },
+    showNullRemark(obj) {
+      if (obj === null || obj === undefined || obj === '') {
+        return '--'
+      }
+      return obj.remark
+    },
     createData() {
       this.editPermissionLoading = true
+      if (Array.isArray(this.editPermission.parent_id)) {
+        this.editPermission.parent_id = this.editPermission.parent_id[this.editPermission.parent_id.length - 1]
+      }
       if (this.editPermission.id) { // update
         updatePermission(this.editPermission).then(response => {
           this.editPermissionLoading = false
