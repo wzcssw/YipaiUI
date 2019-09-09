@@ -30,7 +30,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="editRoleTitle + '角色'" :visible.sync="editRoleVisiable" width="430px">
+    <el-dialog :title="editRoleTitle + '角色'" :visible.sync="editRoleVisiable" width="430px" @close="closeDialog">
       <div class="box-item" style="margin-left: 30px;">
         <el-form ref="editRoleForm" :rules="editRoleRules" :model="editRole" label-position="left" label-width="50px">
           <el-form-item v-show="false" :label="'id'" prop="id">
@@ -141,44 +141,54 @@ export default {
       }
       this.editRoleVisiable = true
     },
-    handlePermission() {
-      this.$refs.permissionDialog.initDialog()
+    handlePermission(row) {
+      this.$refs.permissionDialog.initDialog('role', row)
+    },
+    closeDialog() {
+      this.$nextTick(() => {
+        this.$refs.editRoleForm.clearValidate()
+      })
+      this.getList()
     },
     createData() {
-      this.editRoleLoading = true
-      if (this.editRole.id) { // update
-        updateRole(this.editRole).then(response => {
-          this.editRoleLoading = false
-          this.editRoleVisiable = false
-          this.getList()
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-        }).catch(error => {
-          this.editRoleLoading = false
-          this.$message({
-            message: error.data.message,
-            type: 'warning'
-          })
-        })
-      } else { // add
-        addRole(this.editRole).then(response => {
-          this.editRoleLoading = false
-          this.editRoleVisiable = false
-          this.getList()
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-        }).catch(error => {
-          this.editRoleLoading = false
-          this.$message({
-            message: error.data.message,
-            type: 'warning'
-          })
-        })
-      }
+      this.$refs.editRoleForm.validate(valid => {
+        if (valid) {
+          this.editRoleLoading = true
+          if (this.editRole.id) { // update
+            updateRole(this.editRole).then(response => {
+              this.editRoleLoading = false
+              this.editRoleVisiable = false
+              this.getList()
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              })
+            }).catch(error => {
+              this.editRoleLoading = false
+              this.$message({
+                message: error.data.message,
+                type: 'warning'
+              })
+            })
+          } else { // add
+            addRole(this.editRole).then(response => {
+              this.editRoleLoading = false
+              this.editRoleVisiable = false
+              this.getList()
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              })
+            }).catch(error => {
+              this.editRoleLoading = false
+              this.$message({
+                message: error.data.message,
+                type: 'warning'
+              })
+            })
+          }
+        }
+      })
     }
   }
 }

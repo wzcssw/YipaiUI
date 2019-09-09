@@ -48,6 +48,22 @@ export function getUsers(params) {
   })
 }
 
+export function addUser(data) {
+  return request({
+    url: '/users',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url: '/users',
+    method: 'put',
+    data
+  })
+}
+
 export function updatePassword(data) {
   return request({
     url: '/users/password',

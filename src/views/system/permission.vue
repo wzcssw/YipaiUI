@@ -33,13 +33,13 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="editPermissionTitle + '权限'" :visible.sync="editPermissionVisiable" width="430px">
+    <el-dialog :title="editPermissionTitle + '权限'" :visible.sync="editPermissionVisiable" width="430px" @close="closeDialog">
       <div class="box-item" style="margin-left: 30px;">
         <el-form ref="editPermissionForm" :rules="editPermissionRules" :model="editPermission" label-position="left" label-width="70px">
           <el-form-item v-show="false" :label="'id'" prop="id">
             <el-input v-model="editPermission.id" />
           </el-form-item>
-          <el-form-item :label="'父权限'" prop="remark">
+          <el-form-item :label="'父权限'" prop="parent_id">
             <el-cascader v-model="editPermission.parent_id" :props="{ checkStrictly: true }" :show-all-levels="false" :options="permissionTree" style="width: 220px;" clearable />
           </el-form-item>
           <el-form-item :label="'名称'" prop="name">
@@ -132,6 +132,12 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
+    closeDialog() {
+      this.$nextTick(() => {
+        this.$refs.editPermissionForm.clearValidate()
+      })
+      this.getList()
+    },
     handleEdit(row) {
       getPermissionTree({}).then(response => {
         this.permissionTree = response.data
@@ -161,43 +167,47 @@ export default {
       return obj.remark
     },
     createData() {
-      this.editPermissionLoading = true
-      if (Array.isArray(this.editPermission.parent_id)) {
-        this.editPermission.parent_id = this.editPermission.parent_id[this.editPermission.parent_id.length - 1]
-      }
-      if (this.editPermission.id) { // update
-        updatePermission(this.editPermission).then(response => {
-          this.editPermissionLoading = false
-          this.editPermissionVisiable = false
-          this.getList()
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-        }).catch(error => {
-          this.editPermissionLoading = false
-          this.$message({
-            message: error.data.message,
-            type: 'warning'
-          })
-        })
-      } else { // add
-        addPermission(this.editPermission).then(response => {
-          this.editPermissionLoading = false
-          this.editPermissionVisiable = false
-          this.getList()
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-        }).catch(error => {
-          this.editPermissionLoading = false
-          this.$message({
-            message: error.data.message,
-            type: 'warning'
-          })
-        })
-      }
+      this.$refs.editPermissionForm.validate(valid => {
+        if (valid) {
+          this.editPermissionLoading = true
+          if (Array.isArray(this.editPermission.parent_id)) {
+            this.editPermission.parent_id = this.editPermission.parent_id[this.editPermission.parent_id.length - 1]
+          }
+          if (this.editPermission.id) { // update
+            updatePermission(this.editPermission).then(response => {
+              this.editPermissionLoading = false
+              this.editPermissionVisiable = false
+              this.getList()
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              })
+            }).catch(error => {
+              this.editPermissionLoading = false
+              this.$message({
+                message: error.data.message,
+                type: 'warning'
+              })
+            })
+          } else { // add
+            addPermission(this.editPermission).then(response => {
+              this.editPermissionLoading = false
+              this.editPermissionVisiable = false
+              this.getList()
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              })
+            }).catch(error => {
+              this.editPermissionLoading = false
+              this.$message({
+                message: error.data.message,
+                type: 'warning'
+              })
+            })
+          }
+        }
+      })
     }
   }
 }

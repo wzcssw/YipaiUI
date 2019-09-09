@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import router from '@/router'
 
 // create an axios instance
 const service = axios.create({
@@ -47,6 +48,18 @@ service.interceptors.response.use(
     return res.data
   },
   error => {
+    if (error.response.status === 403) {
+      return new Promise(async resolve => {
+        Message({
+          message: '会话过期,请重新登录',
+          type: 'warning',
+          duration: 3 * 1000
+        })
+        await store.dispatch('user/logout')
+        router.push('/login')
+        resolve()
+      })
+    }
     if (error.response.status === 500) {
       Message({
         message: '服务器错误(500)',
